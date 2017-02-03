@@ -1,0 +1,20 @@
+<body>
+    <div class="container">
+        <header>
+            {{> loginButtons}}
+
+            <h1>Messages</h1>
+
+            {{#if currentUser}}
+                <form class="new-task">
+    		        <input type="text" name="text" placeholder="Type a Messages" />
+    		    </form>
+            {{/if}}
+
+        </header>
+
+        <ul>
+            {{#each tasks}} {{> task}} {{/each}}
+        </ul>
+    </div>
+</body>
