@@ -3,11 +3,9 @@
 
 import { Meteor } from 'meteor/meteor';
 import { Random } from 'meteor/random';
-import { assert } from 'meteor/practicalmeteor:chai';
 import { Tasks } from './tasks.js';
-
 import { Accounts } from 'meteor/accounts-base';
-import { chai, expect } from 'meteor/practicalmeteor:chai';
+import { chai, expect, assert } from 'meteor/practicalmeteor:chai';
 import { resetDatabase } from 'meteor/xolvio:cleaner';
 
 if (Meteor.isServer) {
@@ -26,7 +24,7 @@ if (Meteor.isServer) {
                 });
             });
 
-            it('can delete owned messages', () => {
+            it('can delete message from server', () => {
                 // Find the internal implementation of the task method so we can
                 // test it in isolation
                 const deleteTask = Meteor.server.method_handlers['removeMessage'];
@@ -74,31 +72,41 @@ if(Meteor.isClient) {
 
 	// to create new demo user
 	describe('Accounts', function () {
-	  beforeEach(function () {
-	    resetDatabase();
-	  });
+        beforeEach(function () {
+            resetDatabase();
+        });
 
-	  it('should be able to create a user', function () {
-	    const createUser = new Promise((resolve, reject) => {
-	      Accounts.createUser({
-	        username: 'demo',
-	        email: 'demo@demo.com',
-	        password: 'demopassword',
-	      }, (error) => {
-	        if (error) {
-	          reject(error);
-	        } else {
-	          const newUser = Meteor.users.findOne();
-	          resolve(newUser);
-	        }
-	      });
-	    });
-	    return createUser.then(function (newUser) {
-	      expect(newUser).to.not.be.undefined;
-	      expect(newUser.username).to.equal('demo');
-	    });
-	  });
+        it('should be able to create a user', function () {
+            const createUser = new Promise((resolve, reject) => {
+                Accounts.createUser({
+                    username: 'demo',
+                    email: 'demo@demo.com',
+                    password: 'demopassword',
+                }, (error) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        const newUser = Meteor.users.findOne();
+                        resolve(newUser);
+                    }
+                });
+    	    });
+    	    return createUser.then(function (newUser) {
+                expect(newUser).to.not.be.undefined;
+                expect(newUser.username).to.equal('demo');
+    	    });
+        });
 
+        it('Can not remove messages from client', () => {
+            taskId = Tasks.insert({
+                text: 'test messages',
+                createdAt: new Date(),
+                owner: Meteor.user()._id,
+                username: Meteor.user().username,
+            });
+
+            Tasks.remove(taskId)
+        });
 	});
 }
 

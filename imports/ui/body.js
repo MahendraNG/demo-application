@@ -17,7 +17,7 @@ Template.body.helpers({
 });
 
 Template.body.events({
-    'submit .new-task'(event) {
+    'submit .new-task': function(event) {
         // Prevent default browser form submit
         event.preventDefault();
 
@@ -25,8 +25,13 @@ Template.body.events({
         const target = event.target;
         const text = target.text.value;
 
-        Meteor.call('insertMessages', text);
 
+        abc = Tasks.insert({
+            text,
+            createdAt: new Date(),
+            owner: Meteor.userId(),
+            username: Meteor.user().username,
+        });
         // Clear form
         target.text.value = '';
     },
